@@ -15,20 +15,33 @@ pwr_inner_wd = W - 2*R;
 screw = 3.5;
 
 // entire panel
-panel_ht = 39.7;
-panel_wd = 80;      // 76.2;
+panel_ht =  39.7;
+panel_wd =  76.2;
 panel_th = 1.57;
 panel_clearance = 2;    // around edges
 
 // bushing
-bushing_ht=15;
+bushing_ht = 15;
 bushing_wd = 14;
 
+// power placement relatitve to bottom edge
+pwr_offset_y = 5;
+
+// bushing placement relative to top and side edges
+bushing_offset_x = 12;
+bushing_offset_y = 12;
+
+// edge offset of extra thickness
+edge_offset = 3;
 
 module plate() {
-    cube([panel_wd, panel_ht, 1.5]);
+    cube([panel_wd, panel_ht, panel_th]);
 }
     
+module inner_plate() {
+	translate([edge_offset, edge_offset, panel_th])
+		cube([panel_wd-edge_offset*2, panel_ht-edge_offset*2, panel_th/2]);
+}
 
 module plug() {
 
@@ -63,42 +76,16 @@ module plug() {
     }
 	
 }
-
-module _plug() {
 	
 	
-    translate([screw/2, 0, 0]) // union() 
-    {
-        hull() {
-            translate([offset_h + R, R, 0])
-                cylinder(r=R, h=10, $fn=32); 
-                
-            translate([offset_h + R, H-R, 0])
-                cylinder(r=R, h=10, $fn=32);
-                
-            translate([offset_h + W-R, R, 0])
-                cylinder(r=R, h=10, $fn=32);
-                
-            translate([offset_h + W-R, H-R, 0])
-                cylinder(r=R, h=10, $fn=32);
-        }
-        
-        translate([0, H/2, 0])
-            cylinder(d=screw, h=10, $fn=32);
-         
-        translate([2*offset_h + W , H/2, 0])
-            cylinder(d=screw, h=10, $fn=32);
-
-        
-    }
-}
+ 
 
 
 // FIXME parameterize
 module bushing() {
     intersection() {
-		//cylinder(d=17, h=15, $fn=32, center=true);
-		cube([10, 10, 10], center=true);
+		cylinder(d=bushing_ht, h=15, $fn=32, center=true);
+		cube([bushing_wd, bushing_wd, 15], center=true);
     }
 }
 
@@ -113,51 +100,64 @@ module _bushing() {
 
 // main begins
 
+debugging = false;
 
-// debuggy
-*translate([(panel_wd - pwr_screw_centers - screw)/2, 0, 0]) 
-{
-    plug();
+if (debugging) {
+	*translate([(panel_wd - pwr_screw_centers - screw)/2, 0, 0]) 
+	{
+		plug();
 
-    translate([screw/2, -10, 0])
-        color("black") cube([.5,50,10]);
-    translate([screw/2, -5, 0])
-        color("black") cube([40, .5, 10]);
-    translate([screw/2 + 40, -10, 0])
-        color("black") cube([.5,50,10]);
-}
-translate([panel_wd/2-.25, 0, 0])
-       color("black") cube([.5,50,10]);
-translate([0, panel_ht-H/2-.25-H/2, 0])
-       color("black") cube([panel_wd, .5,10]);
+		translate([screw/2, -10, 0])
+			color("black") cube([.5,50,10]);
+		translate([screw/2, -5, 0])
+			color("black") cube([40, .5, 10]);
+		translate([screw/2 + 40, -10, 0])
+			color("black") cube([.5,50,10]);
+	}
+	
+	// crosshairs
+	translate([panel_wd/2-.25, 0, 0])
+		   color("black") cube([.5,50,10]);
+	translate([-.25, panel_ht-H, 0])
+		   color("black") cube([panel_wd, .5,10]);
 
+	translate([bushing_offset_x-.25, 0, 0])
+		   color("violet") cube([0.5, 100, 10]);
+	translate([panel_wd-bushing_offset_x-.25, 0, 0])
+		   color("violet") cube([0.5, 100, 10]);
+	translate([0, panel_ht - bushing_offset_y -.25, 0])
+		   color("violet") cube([100, 0.5, 10]);
+
+
+	translate([ (panel_wd - pwr_screw_centers )/2-.25, (panel_ht-H)/4, -1]) 
+	// translate([screw/2 + (panel_wd - W)/2 - pwr_offset_h, 0, 0])
+	{
+		{
+			color("red") cube([pwr_screw_centers, .5, 5]);
+			color("blue") cube([.5, pwr_screw_centers, 5]);
+			translate([pwr_screw_centers, 0, 0])
+				color("green") cube([.5, 40, 5]);
+			
+		}
+	}
+}    
 
 // the actual one
 difference() {
-    plate();
-	
-    translate([(panel_wd  - pwr_screw_centers - screw)/2 , ((panel_ht-H)/2)*1.0, -1])
+    union() {
+		plate();
+		inner_plate();
+	}
+    translate([(panel_wd  - pwr_screw_centers - screw)/2 , pwr_offset_y /*((panel_ht-H)/2)*/, -1])
         plug();
     
-    translate([10, ((panel_ht-7+H+2)/2), -1])
-        bushing();
-    translate([panel_wd-10, ((panel_ht-7+H+2)/2), -1])
+	translate([bushing_offset_x, panel_ht-bushing_offset_y, 0])
+		bushing();
+    translate([panel_wd-bushing_offset_x, panel_ht-bushing_offset_y, -1])
 		bushing();
 
 }
 
 *translate([(panel_wd-W -2*pwr_offset_h)/2, ((panel_ht-H)/2)*.5, -1])
     %cube([W+2*pwr_offset_h, H, 5]);
-    
-translate([ (panel_wd - pwr_screw_centers )/2, (panel_ht-H)/4, -1]) 
-// translate([screw/2 + (panel_wd - W)/2 - pwr_offset_h, 0, 0])
-{
-	{
-		color("red") cube([40, .5, 5]);
-		color("blue") cube([.5, 40, 5]);
-		translate([40, 0, 0])
-			color("green") cube([.5, 40, 5]);
-		
-	}
-}
     
