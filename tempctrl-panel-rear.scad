@@ -1,3 +1,5 @@
+include <panel.scad>
+
 // power connector
 R = 3;          // corner radius
 H = 20.2;		// actual height	
@@ -14,12 +16,6 @@ pwr_inner_wd = W - 2*R;
 
 screw = 3.5;
 
-// entire panel
-panel_ht =  39.7;
-panel_wd =  76.2;
-panel_th = 1.57;
-panel_clearance = 2;    // around edges
-
 // bushing
 bushing_ht = 15;
 bushing_wd = 14;
@@ -31,17 +27,6 @@ pwr_offset_y = 5;
 bushing_offset_x = 12;
 bushing_offset_y = 12;
 
-// edge offset of extra thickness
-edge_offset = 3;
-
-module plate() {
-    cube([panel_wd, panel_ht, panel_th]);
-}
-    
-module inner_plate() {
-	translate([edge_offset, edge_offset, panel_th])
-		cube([panel_wd-edge_offset*2, panel_ht-edge_offset*2, panel_th/2]);
-}
 
 module plug() {
 
@@ -143,6 +128,7 @@ if (debugging) {
 }    
 
 // the actual one
+module rear_panel() {
 difference() {
     union() {
 		plate();
@@ -161,3 +147,4 @@ difference() {
 *translate([(panel_wd-W -2*pwr_offset_h)/2, ((panel_ht-H)/2)*.5, -1])
     %cube([W+2*pwr_offset_h, H, 5]);
     
+}
