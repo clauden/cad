@@ -3,8 +3,8 @@ include <panel.scad>
 // override
 edge_offset = 1.8;
 
-cutout_wd = 71;
-cutout_ht = 29;
+cutout_wd = 70.5;
+cutout_ht = 29.5;
 
 
 module front_panel() {
@@ -17,3 +17,5 @@ module front_panel() {
 			cube([cutout_wd, cutout_ht, 100]);
 	}
 }
+
+front_panel();
