@@ -15,3 +15,8 @@ module inner_plate() {
 	translate([edge_offset, edge_offset, panel_th])
 		cube([panel_wd-edge_offset*2, panel_ht-edge_offset*2, panel_th/2]);
 }
+
+module outer_plate() {
+	translate([edge_offset, edge_offset, -panel_th])
+		cube([panel_wd-edge_offset*2, panel_ht-edge_offset*2, 4.2]);
+}
