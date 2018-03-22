@@ -17,9 +17,8 @@ pwr_inner_wd = W - 2*R;
 screw = 3.5;
 
 // bushing
-bushing_ht = 15.1;          // rectangle height
-bushing_wd = 13.8;          // circle
-bushing_flat = 10;          // rectangle width
+bushing_ht = 15.9;          // rectangle height
+bushing_wd = 14;          // circle
 
 // power placement relatitve to bottom edge
 pwr_offset_y = 5;
@@ -67,19 +66,18 @@ module plug() {
  
 
 
-// FIXME parameterize
 module bushing() {
     intersection() {
-		cylinder(d=bushing_wd, h=15, $fn=32, center=true);
-		cube([bushing_ht, bushing_flat, 15], center=true);
+		cylinder(d=bushing_ht, h=15, $fn=32, center=true);
+		cube([bushing_wd, 100, 100], center=true);
     }
 }
-
+/*
 bushing();
 color("black")
 translate([0, bushing_wd/2,0])
 cube([10, .5, 10], center=true);
-
+*/
 module _bushing() {
     intersection() 
     {
@@ -158,4 +156,4 @@ difference() {
 
 
 
-*rear_panel();
+rear_panel();
