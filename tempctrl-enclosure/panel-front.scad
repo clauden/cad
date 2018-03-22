@@ -12,6 +12,7 @@ module front_panel() {
 		union() {
 			plate(); 
 			inner_plate();
+			outer_plate();
 		}
 		translate([(panel_wd - cutout_wd)/2, (panel_ht - cutout_ht)/2, -20])
 			cube([cutout_wd, cutout_ht, 100]);
