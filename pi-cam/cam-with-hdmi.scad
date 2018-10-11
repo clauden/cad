@@ -132,9 +132,6 @@ module ff15_bent() {
 			rotate([0, 90, 0])
 				translate([0,0,-10])
 					cylinder(d=_fdiam-2*ffz, h=ffx+11, $fn=72);
-			translate([0, -fdiam/2, -10])
-				cube([100, 10+fdiam/2, 20]);
-
 			translate([-10, -_fdiam/2, -10])
 				cube([100, _fdiam/2, 20]);
 	
@@ -211,7 +208,26 @@ module cam_top() {  // only topside components
   translate([smfox,smfoy,zs]) flex(); // micro-flex on sensor
 }
 
+module through_holes() {
+	translate([mhox,mhoy,zs + smt]) {     
+		children(0);
+		translate([mhxc,0,0])
+			children(0); 	// cylinder(d=ID1,h=zs*10,$fn=fn);
+		translate([mhxc,mhyc,0]) 
+			children(0);	// cylinder(d=ID1,h=zs*10,$fn=fn);
+		translate([0,mhyc,0]) 
+			children(0);		// cylinder(d=ID1,h=zs*10,$fn=fn);
+	}
+}
 
+translate([0,0,-20])
+	through_holes() {
+// 		cube([5,5,5], center=true);
+		cylinder(h=50, d=2.0, center=true, $fn=72);
+	}
+	
+	
+	
 // hdmi connector board
 module hdmi_board() {
 	translate([0, 0, -(zs + spcrht + .1)])
